@@ -12,7 +12,7 @@ function DeploymentBox({}: Props) {
   });
 
   const [isLoading, setIsLoading] = useState(false);
-  const [logs, setLogs] = useState("");
+  const [logs, setLogs] = useState<string[]>([]);
 
   async function deploy(e: FormEvent) {
     e.preventDefault();
@@ -21,17 +21,29 @@ function DeploymentBox({}: Props) {
       deploymentInfo.git_url.length !== 0
     ) {
       setIsLoading(true);
-      // const response = fetch("http://localhost:8000/setup", {
-      //   headers: {
-      //     "Content-Type": "application/json;charset=utf=8",
-      //   },
-      //   method: "POST",
-      //   body: JSON.stringify(deploymentInfo),
-      // });
-      setTimeout(() => {
-        setIsLoading(false);
-        setLogs("1");
-      }, 2000);
+      const response = await fetch("http://localhost:8000/setup", {
+        headers: {
+          "Content-Type": "application/json;charset=utf=8",
+        },
+        method: "POST",
+        body: JSON.stringify(deploymentInfo),
+      });
+
+      const json_response = await response.json();
+
+      setIsLoading(false);
+
+      if (response.status === 201) {
+        setLogs(
+          json_response.payload.split("TASK ").map((log: string) => {
+            const modified_log = log
+              .replace(/\*+/g, " ")
+              .replace(/\n+/g, " ")
+              .replace(/\\n/g, "");
+            return modified_log;
+          })
+        );
+      }
     }
   }
 
@@ -99,19 +111,29 @@ function DeploymentBox({}: Props) {
             <p className="text-orange-400 font-semibold flex gap-2 items-center">
               &gt; Deployment Started....
             </p>
-            <p className="flex gap-2 items-center">
-              &gt; Cloning Repo.... <TiTick className="text-green-400" />
-            </p>
-            <p className="flex gap-2 items-center">
-              &gt; Building Project.... <TiTick className="text-green-400" />
-            </p>
-            <p className="flex gap-2 items-center">
-              &gt; Setting up files.... <TiTick className="text-green-400" />
-            </p>
-            <p className="flex gap-2 items-center">
-              &gt; Creating Virtual host....{" "}
-              <TiTick className="text-green-400" />
-            </p>
+            {logs.map((log: string, index: number) => {
+              if (log.includes("ok") || log.includes("changed")) {
+                if (index + 1 === logs.length) {
+                  return (
+                    <>
+                      <p key={index} className="flex gap-2 items-center">
+                        &gt; {log.split("PLAY ")[0]}{" "}
+                        <TiTick className="text-green-400" />
+                      </p>
+                      <p key={index} className="flex gap-2 items-center">
+                        &gt; {log.split("PLAY ")[1]}{" "}
+                        <TiTick className="text-green-400" />
+                      </p>
+                    </>
+                  );
+                }
+                return (
+                  <p key={index} className="flex gap-2 items-center">
+                    &gt; {log} <TiTick className="text-green-400" />
+                  </p>
+                );
+              }
+            })}
             <p className="text-green-400 font-semibold flex gap-2 items-center">
               &gt; Done....
             </p>

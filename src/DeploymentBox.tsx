@@ -2,7 +2,7 @@ import { FormEvent, useState } from "react";
 import Divider from "./components/Divider";
 import Loading from "./components/Loading";
 import { TiTick } from "react-icons/ti";
-
+import { ImCancelCircle } from "react-icons/im";
 type Props = {};
 
 function DeploymentBox({}: Props) {
@@ -11,10 +11,13 @@ function DeploymentBox({}: Props) {
     domain: "",
   });
 
+  const [processSuccess, setProcessSuccess] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
 
   async function deploy(e: FormEvent) {
+    setProcessSuccess(false);
     e.preventDefault();
     if (
       deploymentInfo.domain.length !== 0 &&
@@ -23,7 +26,7 @@ function DeploymentBox({}: Props) {
       setIsLoading(true);
       const response = await fetch("http://localhost:8000/setup", {
         headers: {
-          "Content-Type": "application/json;charset=utf=8",
+          "Content-Type": "application/json;charset=utf-8",
         },
         method: "POST",
         body: JSON.stringify(deploymentInfo),
@@ -43,6 +46,21 @@ function DeploymentBox({}: Props) {
             return modified_log;
           })
         );
+        setProcessSuccess(true);
+      } else {
+        setProcessSuccess(false);
+        let modified_response = json_response.payload
+          .split("TASK ")
+          .map((log: string) => {
+            const modified_log = log
+              .replace(/\*+/g, " ")
+              .replace(/\n+/g, " ")
+              .replace(/\\n/g, "");
+            return modified_log;
+          });
+
+        modified_response.push(json_response.error);
+        setLogs(modified_response);
       }
     }
   }
@@ -113,7 +131,7 @@ function DeploymentBox({}: Props) {
             </p>
             {logs.map((log: string, index: number) => {
               if (log.includes("ok") || log.includes("changed")) {
-                if (index + 1 === logs.length) {
+                if (index + 1 === logs.length && log.includes("PLAY ")) {
                   return (
                     <>
                       <p key={index} className="flex gap-2 items-center">
@@ -126,6 +144,15 @@ function DeploymentBox({}: Props) {
                       </p>
                     </>
                   );
+                } else if (index + 1 === logs.length && log.includes("(E)")) {
+                  return (
+                    <p
+                      key={index}
+                      className="flex gap-2 items-center text-red-400"
+                    >
+                      &gt; {log} <ImCancelCircle className="text-red-400" />
+                    </p>
+                  );
                 }
                 return (
                   <p key={index} className="flex gap-2 items-center">
@@ -134,9 +161,15 @@ function DeploymentBox({}: Props) {
                 );
               }
             })}
-            <p className="text-green-400 font-semibold flex gap-2 items-center">
-              &gt; Done....
-            </p>
+            {processSuccess ? (
+              <p className="text-green-400 font-semibold flex gap-2 items-center">
+                &gt; Done....
+              </p>
+            ) : (
+              <p className="text-red-400 font-semibold flex gap-2 items-center">
+                &gt; Failed....
+              </p>
+            )}
           </p>
         </div>
       ) : null}

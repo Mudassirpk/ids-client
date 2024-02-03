@@ -1,6 +1,4 @@
-type Props = {};
-
-function Divider({}: Props) {
+function Divider() {
   return <div className="w-full border-2 border-blue-800"></div>;
 }
 

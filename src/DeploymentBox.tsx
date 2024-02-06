@@ -3,9 +3,8 @@ import Divider from "./components/Divider";
 import Loading from "./components/Loading";
 import { TiTick } from "react-icons/ti";
 import { ImCancelCircle } from "react-icons/im";
-type Props = {};
 
-function DeploymentBox({}: Props) {
+function DeploymentBox() {
   const [deploymentInfo, setDeploymentInfo] = useState({
     git_url: "",
     domain: "",
@@ -24,7 +23,7 @@ function DeploymentBox({}: Props) {
       deploymentInfo.git_url.length !== 0
     ) {
       setIsLoading(true);
-      const response = await fetch("http://localhost:8000/setup", {
+      const response = await fetch("http://localhost:3001/setup", {
         headers: {
           "Content-Type": "application/json;charset=utf-8",
         },
@@ -44,12 +43,12 @@ function DeploymentBox({}: Props) {
               .replace(/\n+/g, " ")
               .replace(/\\n/g, "");
             return modified_log;
-          })
+          }),
         );
         setProcessSuccess(true);
       } else {
         setProcessSuccess(false);
-        let modified_response = json_response.payload
+        const modified_response = json_response.payload
           .split("TASK ")
           .map((log: string) => {
             const modified_log = log

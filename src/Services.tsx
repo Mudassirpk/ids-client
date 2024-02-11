@@ -70,7 +70,13 @@ export default function Services() {
                             <td className="whitespace-nowrap px-6 py-4">
                               {status.name}
                             </td>
-                            <td className={`${status.name === 'online'?"text-green-700":"text-red-700"} font-semibold whitespace-nowrap px-6 py-4`}>
+                            <td
+                              className={`${
+                                status.name.trim().toLowerCase() === "online"
+                                  ? "text-green-700"
+                                  : "text-red-700"
+                              } font-semibold whitespace-nowrap px-6 py-4`}
+                            >
                               {status.status}
                             </td>
                             <td className="whitespace-nowrap px-6 py-4">

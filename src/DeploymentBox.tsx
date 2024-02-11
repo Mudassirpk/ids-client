@@ -23,7 +23,7 @@ function DeploymentBox() {
       deploymentInfo.git_url.length !== 0
     ) {
       setIsLoading(true);
-      const response = await fetch("http://localhost:3001/setup", {
+      const response = await fetch("http://localhost:3001/react-frontend", {
         headers: {
           "Content-Type": "application/json;charset=utf-8",
         },
@@ -32,7 +32,6 @@ function DeploymentBox() {
       });
 
       const json_response = await response.json();
-
       setIsLoading(false);
 
       if (response.status === 201) {

@@ -5,10 +5,9 @@ export default function Services() {
 
   useEffect(() => {
     async function get_status() {
-      const response = await fetch("/api/status");
+      const response = await fetch("api/status");
       if (response.status === 200) {
         const json_response = await response.json();
-        console.log(json_response);
         setStatuses(json_response);
       } else {
         console.log(response);
@@ -72,7 +71,7 @@ export default function Services() {
                             </td>
                             <td
                               className={`${
-                                status.name.trim().toLowerCase() === "online"
+                                status.status.trim().toLowerCase() === "online"
                                   ? "text-green-700"
                                   : "text-red-700"
                               } font-semibold whitespace-nowrap px-6 py-4`}

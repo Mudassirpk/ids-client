@@ -5,7 +5,7 @@ export default function Services() {
 
   useEffect(() => {
     async function get_status() {
-      const response = await fetch("http://localhost:3001/status");
+      const response = await fetch("api/status");
       if (response.status === 200) {
         const json_response = await response.json();
         console.log(json_response);

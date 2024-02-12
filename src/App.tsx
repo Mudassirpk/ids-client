@@ -1,6 +1,7 @@
 import "./App.css";
 import DeploymentBox from "./DeploymentBox";
 import Services from "./Services";
+import Divider from "./components/Divider";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         </p>
       </div>
       <DeploymentBox />
+      <Divider />
       <Services />
     </main>
   );

@@ -31,7 +31,7 @@ export default function BackendDeploymentBox() {
       try {
         setIsLoading(true);
 
-        const response = await fetch("http://localhost:3001/node-backend", {
+        const response = await fetch("api/node-backend", {
           headers: {
             "Content-Type": "application/json;charset=utf-8",
           },

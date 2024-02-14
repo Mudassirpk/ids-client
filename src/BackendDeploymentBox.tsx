@@ -8,8 +8,9 @@ export default function BackendDeploymentBox() {
   const [deploymentInfo, setDeploymentInfo] = useState({
     repo_url: "",
     site_name: "",
-    entry_file_name: "",
-    build_dir_name: "",
+    entry_file_name: "index.js",
+    build_dir_name: "build",
+    build_command: "",
   });
 
   const [processSuccess, setProcessSuccess] = useState(false);
@@ -24,12 +25,13 @@ export default function BackendDeploymentBox() {
       deploymentInfo.repo_url.length !== 0 &&
       deploymentInfo.build_dir_name.length !== 0 &&
       deploymentInfo.entry_file_name.length !== 0 &&
-      deploymentInfo.site_name.length !== 0
+      deploymentInfo.site_name.length !== 0 &&
+      deploymentInfo.build_command.length !== 0
     ) {
       try {
         setIsLoading(true);
 
-        const response = await fetch("api/node-backend", {
+        const response = await fetch("http://localhost:3001/node-backend", {
           headers: {
             "Content-Type": "application/json;charset=utf-8",
           },
@@ -106,7 +108,7 @@ export default function BackendDeploymentBox() {
             onChange={(e) =>
               setDeploymentInfo({
                 ...deploymentInfo,
-                repo_url: e.target.value,
+                site_name: e.target.value,
               })
             }
             value={deploymentInfo.site_name}
@@ -142,6 +144,22 @@ export default function BackendDeploymentBox() {
               })
             }
             value={deploymentInfo.build_dir_name}
+            type="text"
+            placeholder="index.js"
+            className="p-2 border-2 border-blue-300 rounded-lg"
+          />
+        </label>
+        <label className="flex flex-col gap-2 font-semibold w-full">
+          Build command
+          <input
+            required={true}
+            onChange={(e) =>
+              setDeploymentInfo({
+                ...deploymentInfo,
+                build_command: e.target.value,
+              })
+            }
+            value={deploymentInfo.build_command}
             type="text"
             placeholder="index.js"
             className="p-2 border-2 border-blue-300 rounded-lg"

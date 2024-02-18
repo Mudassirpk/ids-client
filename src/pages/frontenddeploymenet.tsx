@@ -1,10 +1,10 @@
 import { useState, FormEvent } from "react";
 import { ImCancelCircle } from "react-icons/im";
 import { TiTick } from "react-icons/ti";
-import Divider from "./components/Divider";
-import Loading from "./components/Loading";
+import Divider from "../components/Divider.tsx";
+import Loading from "../components/Loading.tsx";
 
-export default function FrontendDeploymentBox() {
+export default function Frontenddeploymenet() {
   const [deploymentInfo, setDeploymentInfo] = useState({
     git_url: "",
     domain: "",
@@ -44,7 +44,7 @@ export default function FrontendDeploymentBox() {
                 .replace(/\n+/g, " ")
                 .replace(/\\n/g, "");
               return modified_log;
-            })
+            }),
           );
           setProcessSuccess(true);
         } else {

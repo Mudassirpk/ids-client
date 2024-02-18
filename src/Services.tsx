@@ -1,30 +1,26 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getServices } from "../services/services.service.ts";
+import Loading from "./components/Loading.tsx";
 
 export default function Services() {
-  const [statuses, setStatuses] = useState([]);
+  const { isLoading, isError, data } = useQuery({
+    queryKey: ["backend-services"],
+    queryFn: () => getServices("backend"),
+  });
 
-  useEffect(() => {
-    async function get_status() {
-      const response = await fetch("api/status");
-      if (response.status === 200) {
-        const json_response = await response.json();
-        setStatuses(json_response);
-      } else {
-        console.log(response);
-      }
-    }
-    get_status();
-  }, []);
+  console.log(data);
 
   return (
-    <section className="w-full flex flex-col items-center justify-center my-6">
+    <section className="w-full flex flex-col px-4 justify-center my-6">
       <h2 className="mt-4 font-semibold text-xl bg-blue-700 text-white rounded-lg px-4 py-2">
         Status of Backend Services
       </h2>
-      {statuses.length === 0 ? (
-        <p className="w-full text-center text-lg text-gray-700">
+      {data?.data.length === 0 ? (
+        <p className="my-2 w-full text-center text-lg text-gray-700">
           No running services found
         </p>
+      ) : isLoading ? (
+        <Loading />
       ) : (
         <div className="flex flex-col">
           <div className="overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -51,7 +47,7 @@ export default function Services() {
                     </tr>
                   </thead>
                   <tbody>
-                    {statuses.map(
+                    {data?.data.map(
                       (
                         status: {
                           name: string;
@@ -59,7 +55,7 @@ export default function Services() {
                           status: string;
                           path: string;
                         },
-                        index: number
+                        index: number,
                       ) => {
                         return (
                           <tr className="border-b dark:border-neutral-500 text-lg text-black">
@@ -86,7 +82,7 @@ export default function Services() {
                             </td>
                           </tr>
                         );
-                      }
+                      },
                     )}
                   </tbody>
                 </table>

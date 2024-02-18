@@ -1,10 +1,10 @@
 import { FormEvent, useState } from "react";
-import Divider from "./components/Divider";
+import Divider from "../components/Divider.tsx";
 import { ImCancelCircle } from "react-icons/im";
 import { TiTick } from "react-icons/ti";
-import Loading from "./components/Loading";
+import Loading from "../components/Loading.tsx";
 
-export default function BackendDeploymentBox() {
+export default function Backenddeployment() {
   const [deploymentInfo, setDeploymentInfo] = useState({
     repo_url: "",
     site_name: "",
@@ -50,7 +50,7 @@ export default function BackendDeploymentBox() {
                 .replace(/\n+/g, " ")
                 .replace(/\\n/g, "");
               return modified_log;
-            })
+            }),
           );
           setProcessSuccess(true);
         } else {
@@ -74,7 +74,7 @@ export default function BackendDeploymentBox() {
     }
   }
   return (
-    <section className="w-[50%] mx-auto px-4 mt-4 py-8 flex flex-col items-center">
+    <section className="w-full mx-auto px-4 mt-4 py-8 flex flex-col items-center">
       <h1 className="font-bold text-center text-blue-800 text-2xl">
         Deploy Node Backend
       </h1>

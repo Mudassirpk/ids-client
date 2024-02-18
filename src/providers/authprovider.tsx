@@ -36,7 +36,7 @@ export default function AuthProvider({
         }
       } else if (token) {
         if (!user) {
-          const res = await fetch("http://localhost:3001/auth/verify-token", {
+          const res = await fetch("api/auth/verify-token", {
             method: "POST",
             headers: {
               "x-auth-token": "Bearer " + token,

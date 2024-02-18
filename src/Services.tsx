@@ -8,8 +8,6 @@ export default function Services() {
     queryFn: () => getServices("backend"),
   });
 
-  console.log(data);
-
   return (
     <section className="w-full flex flex-col px-4 justify-center my-6">
       <h2 className="mt-4 font-semibold text-xl bg-blue-700 text-white rounded-lg px-4 py-2">

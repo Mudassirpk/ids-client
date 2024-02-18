@@ -25,7 +25,7 @@ export default function Frontenddeploymenet() {
       try {
         setIsLoading(true);
 
-        const response = await fetch("http://localhost:3001/react-frontend", {
+        const response = await fetch("api/react-frontend", {
           headers: {
             "Content-Type": "application/json;charset=utf-8",
           },

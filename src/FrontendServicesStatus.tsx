@@ -4,7 +4,7 @@ import Loading from "./components/Loading.tsx";
 import FrontEndServiceRow from "./components/Services/FrontendServiceRow.tsx";
 
 export default function FrontendServicesStatus() {
-  const { isLoading, isError, data } = useQuery({
+  const { isLoading, data } = useQuery({
     queryKey: ["frontend-services"],
     queryFn: () => getServices("frontend"),
   });

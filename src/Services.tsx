@@ -3,7 +3,7 @@ import { getServices } from "../services/services.service.ts";
 import Loading from "./components/Loading.tsx";
 
 export default function Services() {
-  const { isLoading, isError, data } = useQuery({
+  const { isLoading, data } = useQuery({
     queryKey: ["backend-services"],
     queryFn: () => getServices("backend"),
   });

@@ -5,7 +5,7 @@ import { useAuth } from "../providers/authprovider";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [_user, setUser] = useAuth();
 
   const [credentials, setCredentials] = useState({
@@ -38,7 +38,7 @@ export default function Login() {
         localStorage.setItem("auth-token", auth_data.token);
         if (setUser) {
           setUser(auth_data.user);
-          navigate('/')
+          navigate("/");
         }
       }
     }
@@ -74,7 +74,7 @@ export default function Login() {
           />
         </label>
         <label
-          htmlFor="email"
+          htmlFor="password"
           className="flex flex-col gap-2 items-start w-full"
         >
           Password
@@ -84,7 +84,7 @@ export default function Login() {
             onChange={(e) =>
               setCredentials({ ...credentials, password: e.target.value })
             }
-            type="psssword"
+            type="password"
             placeholder="*********"
             id="password"
             className="px-4 py-2 rounded-lg w-full"

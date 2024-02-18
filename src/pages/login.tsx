@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import Error from "../components/Error";
 import { useAuth } from "../providers/authprovider";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ export default function Login() {
     password: "",
   });
 
-  const { isLoading, isError, refetch, isSuccess, data } = useQuery({
+  const { isLoading, isError, refetch, isSuccess, data,error } = useQuery({
     queryKey: ["auth-login"],
     queryFn: login,
     enabled: false,
@@ -22,19 +23,17 @@ export default function Login() {
   });
 
   async function login() {
-    return await fetch("api/auth/login", {
-      method: "POST",
+    return await axios.post("api/auth/login",{...credentials}, {
       headers: {
         "Content-Type": "application/json;charset=utf-8",
       },
-      body: JSON.stringify(credentials),
     });
   }
 
   useEffect(() => {
     async function setup_auth() {
       if (isSuccess) {
-        const auth_data = await data.json();
+        const auth_data = await data.data;
         localStorage.setItem("auth-token", auth_data.token);
         if (setUser) {
           setUser(auth_data.user);
@@ -102,7 +101,7 @@ export default function Login() {
           {isLoading ? "Please wait ...." : "Login"}
         </button>
         <div className="w-full">
-          {isError ? <Error message="Failed to login ...." /> : null}
+          {isError ? <Error message={(error as any).response?.data.message} /> : null}
         </div>
       </form>
     </main>

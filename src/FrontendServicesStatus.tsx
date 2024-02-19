@@ -53,7 +53,7 @@ export default function FrontendServicesStatus() {
                         index: number,
                       ) => {
                         return (
-                          <FrontEndServiceRow service={service} index={index} />
+                          <FrontEndServiceRow key={index} service={service} index={index} />
                         );
                       },
                     )}

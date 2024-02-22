@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Divider from "../components/Divider.tsx";
 import { ImCancelCircle } from "react-icons/im";
 import { TiTick } from "react-icons/ti";
@@ -13,13 +13,18 @@ export default function Backenddeployment() {
     build_command: "",
   });
 
+  const params = new URLSearchParams(window.location.search);
+
   const [processSuccess, setProcessSuccess] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
+  const [message, setMessage] = useState<string | null>(null);
 
   async function deploy(e: FormEvent) {
     setProcessSuccess(false);
+    setLogs([]);
+    setMessage(null);
     e.preventDefault();
     if (
       deploymentInfo.repo_url.length !== 0 &&
@@ -30,13 +35,13 @@ export default function Backenddeployment() {
     ) {
       try {
         setIsLoading(true);
-
-        const response = await fetch("api/node-backend", {
+        const repo_name = params.get("repo_name");
+        const response = await fetch("http://localhost:3001/node-backend", {
           headers: {
             "Content-Type": "application/json;charset=utf-8",
           },
           method: "POST",
-          body: JSON.stringify(deploymentInfo),
+          body: JSON.stringify({ ...deploymentInfo, repo_name }),
         });
 
         const json_response = await response.json();
@@ -45,45 +50,55 @@ export default function Backenddeployment() {
         if (response.status === 201) {
           setLogs(
             json_response.payload.split("TASK ").map((log: string) => {
-              const modified_log = log
+              return log
                 .replace(/\*+/g, " ")
                 .replace(/\n+/g, " ")
                 .replace(/\\n/g, "");
-              return modified_log;
-            }),
+            })
           );
           setProcessSuccess(true);
         } else {
           setProcessSuccess(false);
-          const modified_response = json_response.payload
-            .split("TASK ")
-            .map((log: string) => {
-              const modified_log = log
-                .replace(/\*+/g, " ")
-                .replace(/\n+/g, " ")
-                .replace(/\\n/g, "");
-              return modified_log;
-            });
+          if (json_response.payload) {
+            const modified_response = json_response.payload
+              .split("TASK ")
+              .map((log: string) => {
+                return log
+                  .replace(/\*+/g, " ")
+                  .replace(/\n+/g, " ")
+                  .replace(/\\n/g, "");
+              });
 
-          modified_response.push(json_response.error);
-          setLogs(modified_response);
+            modified_response.push(json_response.error);
+            setLogs(modified_response);
+          } else if (json_response.message) {
+            console.log(json_response);
+            setMessage(json_response.message);
+          }
         }
       } catch (err) {
         console.log(err);
       }
     }
   }
+
+  useEffect(() => {
+    const ssh_url = params.get("ssh_url");
+    if (ssh_url) {
+      setDeploymentInfo({ ...deploymentInfo, repo_url: ssh_url });
+    }
+  }, [params]);
   return (
     <section className="w-full mx-auto px-4 mt-4 py-8 flex flex-col items-center">
       <h1 className="font-bold text-center text-blue-800 text-2xl">
         Deploy Node Backend
       </h1>
-      <div className="w-[400px] my-2 mb-6">
+      <div className="w-[800px] my-2 mb-6">
         <Divider />
       </div>
       <form
         onSubmit={deploy}
-        className="flex flex-col gap-2 items-center w-[400px] border-2 border-blue-800 p-4 rounded-lg"
+        className="flex flex-col gap-2 items-center w-[800px] border-2 border-blue-800 p-4 rounded-lg"
       >
         <label className="flex flex-col gap-2 font-semibold w-full">
           Github repository url
@@ -161,10 +176,25 @@ export default function Backenddeployment() {
             }
             value={deploymentInfo.build_command}
             type="text"
-            placeholder="index.js"
+            placeholder="e.g. npm run build && npx prisma generate"
             className="p-2 border-2 border-blue-300 rounded-lg"
           />
         </label>
+        {/*<label className="flex flex-col gap-2 font-semibold w-full">*/}
+        {/*  .env file for the backend{" "}*/}
+        {/*  <span className="font-normal text-sm">*/}
+        {/*    (if you are not using any environment variables you can leave it)*/}
+        {/*  </span>*/}
+        {/*  <input*/}
+        {/*    accept=".env.*"*/}
+        {/*    type="file"*/}
+        {/*    className="p-2 border-2 border-blue-300 rounded-lg"*/}
+        {/*  />*/}
+        {/*  <span className="text-green-600 font-normal">*/}
+        {/*    ** Feature for adding individual environment variables will be added*/}
+        {/*    soon in version 1.1*/}
+        {/*  </span>*/}
+        {/*</label>*/}
         {isLoading ? (
           <Loading />
         ) : (
@@ -176,14 +206,16 @@ export default function Backenddeployment() {
           </button>
         )}
       </form>
-      {logs.length > 0 ? (
-        <div className="w-full rounded-lg mt-4 border-2 border-blue-800 p-4">
-          <h2 className="mb-2 font-bold text-2xl">Logs</h2>
-          <p className="my-2 bg-gray-900 text-white p-2 rounded-lg">
-            <p className="text-orange-400 font-semibold flex gap-2 items-center">
-              &gt; Deployment Started....
-            </p>
-            {logs.map((log: string, index: number) => {
+      <div className="w-full rounded-lg mt-4 border-2 border-blue-800 p-4">
+        <h2 className="mb-2 font-bold text-2xl">Logs</h2>
+        <p className="my-2 bg-gray-900 text-white p-2 rounded-lg">
+          <p className="text-orange-400 font-semibold flex gap-2 items-center">
+            &gt; Deployment Started....
+          </p>
+          {message ? (
+            <p>{message}</p>
+          ) : (
+            logs.map((log: string, index: number) => {
               if (log.includes("ok") || log.includes("changed")) {
                 if (index + 1 === logs.length && log.includes("PLAY ")) {
                   return (
@@ -214,19 +246,19 @@ export default function Backenddeployment() {
                   </p>
                 );
               }
-            })}
-            {processSuccess ? (
-              <p className="text-green-400 font-semibold flex gap-2 items-center">
-                &gt; Done....
-              </p>
-            ) : (
-              <p className="text-red-400 font-semibold flex gap-2 items-center">
-                &gt; Failed....
-              </p>
-            )}
-          </p>
-        </div>
-      ) : null}
+            })
+          )}
+          {processSuccess ? (
+            <p className="text-green-400 font-semibold flex gap-2 items-center">
+              &gt; Done....
+            </p>
+          ) : (
+            <p className="text-red-400 font-semibold flex gap-2 items-center">
+              &gt; Failed....
+            </p>
+          )}
+        </p>
+      </div>
     </section>
   );
 }

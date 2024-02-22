@@ -51,7 +51,7 @@ export default function Repos() {
                         </th>
                         <th scope="col" className="px-6 py-4">
                           Repo
-                        </th>{" "}
+                        </th>
                         <th scope="col" className="px-6 py-4">
                           Site Type
                         </th>

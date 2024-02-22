@@ -10,7 +10,7 @@ export default function Repos() {
 
   useEffect(() => {
     async function getRepos() {
-      const res = await fetch("http://localhost:3001/github/get-repos", {
+      const res = await fetch("api/github/get-repos", {
         headers: {
           "x-auth-token": "Bearer " + localStorage.getItem("auth-token"),
         },

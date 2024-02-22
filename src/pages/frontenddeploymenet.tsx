@@ -1,4 +1,4 @@
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { ImCancelCircle } from "react-icons/im";
 import { TiTick } from "react-icons/ti";
 import Divider from "../components/Divider.tsx";
@@ -10,10 +10,20 @@ export default function Frontenddeploymenet() {
     domain: "",
   });
 
+  const params = new URLSearchParams(window.location.search);
+
+  // Get the value of the 'url' parameter
   const [processSuccess, setProcessSuccess] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
+
+  useEffect(() => {
+    const ssh_url = params.get("ssh_url");
+    if (ssh_url) {
+      setDeploymentInfo({ ...deploymentInfo, git_url: ssh_url });
+    }
+  }, []);
 
   async function deploy(e: FormEvent) {
     setProcessSuccess(false);
@@ -24,13 +34,13 @@ export default function Frontenddeploymenet() {
     ) {
       try {
         setIsLoading(true);
-
+        const repo_name = params.get("repo_name");
         const response = await fetch("api/react-frontend", {
           headers: {
             "Content-Type": "application/json;charset=utf-8",
           },
           method: "POST",
-          body: JSON.stringify(deploymentInfo),
+          body: JSON.stringify({ ...deploymentInfo, repo_name }),
         });
 
         const json_response = await response.json();

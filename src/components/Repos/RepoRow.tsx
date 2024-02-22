@@ -19,12 +19,8 @@ export default function RepoRow({
   const [siteType, setSiteType] = useState("");
   const navigate = useNavigate();
   async function get_ssh_url(name: string) {
-    console.table({
-      name,
-      site_type: siteType,
-    });
     const response = await axios.post(
-      "http://localhost:3001/github/get-ssh-url",
+      "api/github/get-ssh-url",
       {
         name,
       },
@@ -34,7 +30,6 @@ export default function RepoRow({
         },
       }
     );
-    console.log("data: ", response.data);
     if (response.status === 200) {
       const url_params = new URLSearchParams();
       url_params.append("ssh_url", response.data);

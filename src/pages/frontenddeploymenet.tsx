@@ -9,7 +9,7 @@ export default function Frontenddeploymenet() {
     git_url: "",
     domain: "",
   });
-
+  const [envFile, setEnvFile] = useState<File | null>();
   const params = new URLSearchParams(window.location.search);
 
   // Get the value of the 'url' parameter
@@ -33,14 +33,20 @@ export default function Frontenddeploymenet() {
       deploymentInfo.git_url.length !== 0
     ) {
       try {
-        setIsLoading(true);
+        const formData = new FormData();
+        formData.append("domain", deploymentInfo.domain);
+        formData.append("git_url", deploymentInfo.git_url);
+        formData.append("env", envFile as Blob);
         const repo_name = params.get("repo_name");
+        formData.append("repo_name", repo_name as string);
+
+        setIsLoading(true);
         const response = await fetch("api/react-frontend", {
           headers: {
-            "Content-Type": "application/json;charset=utf-8",
+            "x-auth-token": "Bearer " + localStorage.getItem("auth-token"),
           },
           method: "POST",
-          body: JSON.stringify({ ...deploymentInfo, repo_name }),
+          body: formData,
         });
 
         const json_response = await response.json();
@@ -54,7 +60,7 @@ export default function Frontenddeploymenet() {
                 .replace(/\n+/g, " ")
                 .replace(/\\n/g, "");
               return modified_log;
-            }),
+            })
           );
           setProcessSuccess(true);
         } else {
@@ -123,6 +129,26 @@ export default function Frontenddeploymenet() {
             placeholder="www.example.com"
             className="p-2 border-2 border-blue-300 rounded-lg"
           />
+        </label>
+        <label className="flex flex-col gap-2 font-semibold w-full">
+          Environment variables file
+          <span className="font-normal text-sm">
+            (if you are not using any environment variables you can leave it)
+          </span>
+          <input
+            accept=".env.*"
+            type="file"
+            onChange={(e) => {
+              if (e.target.files) {
+                setEnvFile(e.target.files[0]);
+              }
+            }}
+            className="p-2 border-2 border-blue-300 rounded-lg"
+          />
+          <span className="text-green-600 font-normal">
+            Feature for adding individual environment variables will be added
+            soon in version 1.1
+          </span>
         </label>
         {isLoading ? (
           <Loading />

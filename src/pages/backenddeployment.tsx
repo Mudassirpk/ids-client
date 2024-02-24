@@ -12,6 +12,7 @@ export default function Backenddeployment() {
     build_dir_name: "build",
     build_command: "",
   });
+  const [envFile, setEnvFile] = useState<File | null>();
 
   const params = new URLSearchParams(window.location.search);
 
@@ -36,12 +37,21 @@ export default function Backenddeployment() {
       try {
         setIsLoading(true);
         const repo_name = params.get("repo_name");
+        const formData = new FormData();
+
+        formData.append("repo_url", deploymentInfo.repo_url);
+        formData.append("build_dir_name", deploymentInfo.build_dir_name);
+        formData.append("entry_file_name", deploymentInfo.entry_file_name);
+        formData.append("site_name", deploymentInfo.site_name);
+        formData.append("build_command", deploymentInfo.build_command);
+        formData.append("env", envFile as Blob);
+        formData.append("repo_name", repo_name as string);
         const response = await fetch("http://localhost:3001/node-backend", {
           headers: {
-            "Content-Type": "application/json;charset=utf-8",
+            "x-auth-token": "Bearer " + localStorage.getItem("auth-token"),
           },
           method: "POST",
-          body: JSON.stringify({ ...deploymentInfo, repo_name }),
+          body: formData,
         });
 
         const json_response = await response.json();
@@ -72,7 +82,6 @@ export default function Backenddeployment() {
             modified_response.push(json_response.error);
             setLogs(modified_response);
           } else if (json_response.message) {
-            console.log(json_response);
             setMessage(json_response.message);
           }
         }
@@ -180,21 +189,26 @@ export default function Backenddeployment() {
             className="p-2 border-2 border-blue-300 rounded-lg"
           />
         </label>
-        {/*<label className="flex flex-col gap-2 font-semibold w-full">*/}
-        {/*  .env file for the backend{" "}*/}
-        {/*  <span className="font-normal text-sm">*/}
-        {/*    (if you are not using any environment variables you can leave it)*/}
-        {/*  </span>*/}
-        {/*  <input*/}
-        {/*    accept=".env.*"*/}
-        {/*    type="file"*/}
-        {/*    className="p-2 border-2 border-blue-300 rounded-lg"*/}
-        {/*  />*/}
-        {/*  <span className="text-green-600 font-normal">*/}
-        {/*    ** Feature for adding individual environment variables will be added*/}
-        {/*    soon in version 1.1*/}
-        {/*  </span>*/}
-        {/*</label>*/}
+        <label className="flex flex-col gap-2 font-semibold w-full">
+          .env file for the backend{" "}
+          <span className="font-normal text-sm">
+            (if you are not using any environment variables you can leave it)
+          </span>
+          <input
+            accept=".env.*"
+            type="file"
+            onChange={(e) => {
+              if (e.target.files) {
+                setEnvFile(e.target.files[0]);
+              }
+            }}
+            className="p-2 border-2 border-blue-300 rounded-lg"
+          />
+          <span className="text-green-600 font-normal">
+            Feature for adding individual environment variables will be added
+            soon in version 1.1
+          </span>
+        </label>
         {isLoading ? (
           <Loading />
         ) : (
@@ -206,59 +220,61 @@ export default function Backenddeployment() {
           </button>
         )}
       </form>
-      <div className="w-full rounded-lg mt-4 border-2 border-blue-800 p-4">
-        <h2 className="mb-2 font-bold text-2xl">Logs</h2>
-        <p className="my-2 bg-gray-900 text-white p-2 rounded-lg">
-          <p className="text-orange-400 font-semibold flex gap-2 items-center">
-            &gt; Deployment Started....
-          </p>
-          {message ? (
-            <p>{message}</p>
-          ) : (
-            logs.map((log: string, index: number) => {
-              if (log.includes("ok") || log.includes("changed")) {
-                if (index + 1 === logs.length && log.includes("PLAY ")) {
-                  return (
-                    <>
-                      <p key={index} className="flex gap-2 items-center">
-                        &gt; {log.split("PLAY ")[0]}{" "}
-                        <TiTick className="text-green-400" />
+      {logs.length > 0 || message ? (
+        <div className="w-full rounded-lg mt-4 border-2 border-blue-800 p-4">
+          <h2 className="mb-2 font-bold text-2xl">Logs</h2>
+          <p className="my-2 bg-gray-900 text-white p-2 rounded-lg">
+            <p className="text-orange-400 font-semibold flex gap-2 items-center">
+              &gt; Deployment Started....
+            </p>
+            {message ? (
+              <p>{message}</p>
+            ) : (
+              logs.map((log: string, index: number) => {
+                if (log.includes("ok") || log.includes("changed")) {
+                  if (index + 1 === logs.length && log.includes("PLAY ")) {
+                    return (
+                      <>
+                        <p key={index} className="flex gap-2 items-center">
+                          &gt; {log.split("PLAY ")[0]}{" "}
+                          <TiTick className="text-green-400" />
+                        </p>
+                        <p key={index} className="flex gap-2 items-center">
+                          &gt; {log.split("PLAY ")[1]}{" "}
+                          <TiTick className="text-green-400" />
+                        </p>
+                      </>
+                    );
+                  } else if (index + 1 === logs.length && log.includes("(E)")) {
+                    return (
+                      <p
+                        key={index}
+                        className="flex gap-2 items-center text-red-400"
+                      >
+                        &gt; {log} <ImCancelCircle className="text-red-400" />
                       </p>
-                      <p key={index} className="flex gap-2 items-center">
-                        &gt; {log.split("PLAY ")[1]}{" "}
-                        <TiTick className="text-green-400" />
-                      </p>
-                    </>
-                  );
-                } else if (index + 1 === logs.length && log.includes("(E)")) {
+                    );
+                  }
                   return (
-                    <p
-                      key={index}
-                      className="flex gap-2 items-center text-red-400"
-                    >
-                      &gt; {log} <ImCancelCircle className="text-red-400" />
+                    <p key={index} className="flex gap-2 items-center">
+                      &gt; {log} <TiTick className="text-green-400" />
                     </p>
                   );
                 }
-                return (
-                  <p key={index} className="flex gap-2 items-center">
-                    &gt; {log} <TiTick className="text-green-400" />
-                  </p>
-                );
-              }
-            })
-          )}
-          {processSuccess ? (
-            <p className="text-green-400 font-semibold flex gap-2 items-center">
-              &gt; Done....
-            </p>
-          ) : (
-            <p className="text-red-400 font-semibold flex gap-2 items-center">
-              &gt; Failed....
-            </p>
-          )}
-        </p>
-      </div>
+              })
+            )}
+            {processSuccess ? (
+              <p className="text-green-400 font-semibold flex gap-2 items-center">
+                &gt; Done....
+              </p>
+            ) : (
+              <p className="text-red-400 font-semibold flex gap-2 items-center">
+                &gt; Failed....
+              </p>
+            )}
+          </p>
+        </div>
+      ) : null}
     </section>
   );
 }

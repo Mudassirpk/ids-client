@@ -46,7 +46,7 @@ export default function Backenddeployment() {
         formData.append("build_command", deploymentInfo.build_command);
         formData.append("env", envFile as Blob);
         formData.append("repo_name", repo_name as string);
-        const response = await fetch("http://localhost:3001/node-backend", {
+        const response = await fetch("api/node-backend", {
           headers: {
             "x-auth-token": "Bearer " + localStorage.getItem("auth-token"),
           },

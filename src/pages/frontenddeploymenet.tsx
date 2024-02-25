@@ -3,8 +3,11 @@ import { ImCancelCircle } from "react-icons/im";
 import { TiTick } from "react-icons/ti";
 import Divider from "../components/Divider.tsx";
 import Loading from "../components/Loading.tsx";
+import { useAuth } from "../providers/authprovider.tsx";
 
 export default function Frontenddeploymenet() {
+  const [user,_setUser] = useAuth()
+
   const [deploymentInfo, setDeploymentInfo] = useState({
     git_url: "",
     domain: "",

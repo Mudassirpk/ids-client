@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import Loading from "../components/Loading";
+import RepoRow from "../components/Repos/RepoRow";
 
 export default function Repos() {
-  const [repos, setRepos] = useState<string[] | null>(null);
+  const [repos, setRepos] = useState<
+    { full_name: string; name: string }[] | null
+  >(null);
+  const [selectedRepo, setSelectedRepo] = useState<string | null>(null);
 
   useEffect(() => {
     async function getRepos() {
@@ -40,29 +44,39 @@ export default function Repos() {
                     <thead className="border-b font-medium dark:border-neutral-500">
                       <tr className="text-lg">
                         <th scope="col" className="px-6 py-4">
+                          Select for deployment
+                        </th>
+                        <th scope="col" className="px-6 py-4">
                           S No.
                         </th>
                         <th scope="col" className="px-6 py-4">
                           Repo
                         </th>
+                        <th scope="col" className="px-6 py-4">
+                          Site Type
+                        </th>
+                        <th scope="col" className="px-6 py-4">
+                          Action
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
-                      {repos.map((repo: string, index: number) => {
-                        return (
-                          <tr
-                            key={index}
-                            className="border-b dark:border-neutral-500 text-lg text-black"
-                          >
-                            <td className="whitespace-nowrap px-6 py-4 font-medium">
-                              {index + 1}
-                            </td>
-                            <td className="whitespace-nowrap px-6 py-4">
-                              {repo}
-                            </td>
-                          </tr>
-                        );
-                      })}
+                      {repos.map(
+                        (
+                          repo: { full_name: string; name: string },
+                          index: number
+                        ) => {
+                          return (
+                            <RepoRow
+                              index={index}
+                              repo={repo}
+                              selectedRepo={selectedRepo}
+                              setSelectedRepo={setSelectedRepo}
+                              key={repo.name}
+                            />
+                          );
+                        }
+                      )}
                     </tbody>
                   </table>
                 </div>

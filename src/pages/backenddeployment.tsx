@@ -3,6 +3,7 @@ import Divider from "../components/Divider.tsx";
 import { ImCancelCircle } from "react-icons/im";
 import { TiTick } from "react-icons/ti";
 import Loading from "../components/Loading.tsx";
+import { useAuth } from "../providers/authprovider.tsx";
 
 export default function Backenddeployment() {
   const [deploymentInfo, setDeploymentInfo] = useState({
@@ -12,6 +13,9 @@ export default function Backenddeployment() {
     build_dir_name: "build",
     build_command: "",
   });
+
+  const [user,_setUser] = useAuth()
+
   const [envFile, setEnvFile] = useState<File | null>();
 
   const params = new URLSearchParams(window.location.search);
@@ -37,6 +41,7 @@ export default function Backenddeployment() {
       try {
         setIsLoading(true);
         const repo_name = params.get("repo_name");
+
         const formData = new FormData();
 
         formData.append("repo_url", deploymentInfo.repo_url);
@@ -46,6 +51,9 @@ export default function Backenddeployment() {
         formData.append("build_command", deploymentInfo.build_command);
         formData.append("env", envFile as Blob);
         formData.append("repo_name", repo_name as string);
+        formData.append("owner",user?._id as string)
+
+
         const response = await fetch("api/node-backend", {
           headers: {
             "x-auth-token": "Bearer " + localStorage.getItem("auth-token"),

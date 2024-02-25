@@ -12,6 +12,7 @@ export default function Frontenddeploymenet() {
     git_url: "",
     domain: "",
   });
+
   const [envFile, setEnvFile] = useState<File | null>();
   const params = new URLSearchParams(window.location.search);
 
@@ -42,6 +43,7 @@ export default function Frontenddeploymenet() {
         formData.append("env", envFile as Blob);
         const repo_name = params.get("repo_name");
         formData.append("repo_name", repo_name as string);
+        formData.append("owner", user?._id as string);
 
         setIsLoading(true);
 

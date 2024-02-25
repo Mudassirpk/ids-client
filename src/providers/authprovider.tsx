@@ -16,7 +16,7 @@ const authContext = React.createContext<TAuthContext | null>(null);
 
 export function useAuth(): [
   TUser | null | undefined,
-  React.Dispatch<SetStateAction<TUser | null>> | null | undefined,
+  React.Dispatch<SetStateAction<TUser | null>> | null | undefined
 ] {
   const ctx = React.useContext(authContext);
   return [ctx?.user, ctx?.setUser];
@@ -36,7 +36,7 @@ export default function AuthProvider({
         }
       } else if (token) {
         if (!user) {
-          const res = await fetch("api/auth/verify-token", {
+          const res = await fetch("http://localhost:3001/auth/verify-token", {
             method: "POST",
             headers: {
               "x-auth-token": "Bearer " + token,
@@ -60,6 +60,7 @@ export default function AuthProvider({
 
   const [user, setUser] = useState<TUser | null>(null);
   const values = { user, setUser };
+
   return (
     <authContext.Provider value={values}>
       {!user && window.location.pathname !== "/login" ? (

@@ -14,7 +14,7 @@ export default function Login() {
     password: "",
   });
 
-  const { isLoading, isError, refetch, isSuccess, data,error } = useQuery({
+  const { isLoading, isError, refetch, isSuccess, data, error } = useQuery({
     queryKey: ["auth-login"],
     queryFn: login,
     enabled: false,
@@ -23,11 +23,15 @@ export default function Login() {
   });
 
   async function login() {
-    return await axios.post("api/auth/login",{...credentials}, {
-      headers: {
-        "Content-Type": "application/json;charset=utf-8",
-      },
-    });
+    return await axios.post(
+      "http://localhost:3001/auth/login",
+      { ...credentials },
+      {
+        headers: {
+          "Content-Type": "application/json;charset=utf-8",
+        },
+      }
+    );
   }
 
   useEffect(() => {
@@ -101,7 +105,9 @@ export default function Login() {
           {isLoading ? "Please wait ...." : "Login"}
         </button>
         <div className="w-full">
-          {isError ? <Error message={(error as any).response?.data.message} /> : null}
+          {isError ? (
+            <Error message={(error as any).response?.data.message} />
+          ) : null}
         </div>
       </form>
     </main>

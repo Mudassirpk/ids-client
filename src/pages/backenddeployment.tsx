@@ -14,7 +14,7 @@ export default function Backenddeployment() {
     build_command: "",
   });
 
-  const [user,_setUser] = useAuth()
+  const [user, _setUser] = useAuth();
 
   const [envFile, setEnvFile] = useState<File | null>();
 
@@ -51,8 +51,7 @@ export default function Backenddeployment() {
         formData.append("build_command", deploymentInfo.build_command);
         formData.append("env", envFile as Blob);
         formData.append("repo_name", repo_name as string);
-        formData.append("owner",user?._id as string)
-
+        formData.append("owner", user?._id as string);
 
         const response = await fetch("api/node-backend", {
           headers: {

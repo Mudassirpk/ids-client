@@ -6,7 +6,7 @@ import Loading from "../components/Loading.tsx";
 import { useAuth } from "../providers/authprovider.tsx";
 
 export default function Frontenddeploymenet() {
-  const [user,_setUser] = useAuth()
+  const [user, _setUser] = useAuth();
 
   const [deploymentInfo, setDeploymentInfo] = useState({
     git_url: "",
@@ -47,7 +47,7 @@ export default function Frontenddeploymenet() {
 
         setIsLoading(true);
 
-        const response = await fetch("http://localhost:3001/react-frontend", {
+        const response = await fetch("api/react-frontend", {
           headers: {
             "x-auth-token": "Bearer " + localStorage.getItem("auth-token"),
           },

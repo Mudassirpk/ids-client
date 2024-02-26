@@ -2,7 +2,7 @@ import React, { SetStateAction, useEffect, useState } from "react";
 import Loading from "../components/Loading";
 
 type TUser = {
-  _id:string,
+  _id: string;
   name: string;
   email: string;
   password: null;
@@ -37,7 +37,7 @@ export default function AuthProvider({
         }
       } else if (token) {
         if (!user) {
-          const res = await fetch("http://localhost:3001/auth/verify-token", {
+          const res = await fetch("api/auth/verify-token", {
             method: "POST",
             headers: {
               "x-auth-token": "Bearer " + token,

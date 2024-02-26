@@ -62,9 +62,9 @@ export default function Backenddeployment() {
         });
 
         const json_response = await response.json();
-        setIsLoading(false);
 
         if (response.status === 201) {
+          setIsLoading(false);
           setLogs(
             json_response.payload.split("TASK ").map((log: string) => {
               return log
@@ -75,6 +75,7 @@ export default function Backenddeployment() {
           );
           setProcessSuccess(true);
         } else {
+          setIsLoading(false);
           setProcessSuccess(false);
           if (json_response.payload) {
             const modified_response = json_response.payload
@@ -202,7 +203,7 @@ export default function Backenddeployment() {
             (if you are not using any environment variables you can leave it)
           </span>
           <input
-            accept=".env.*"
+            accept=".env, .env.*"
             type="file"
             onChange={(e) => {
               if (e.target.files) {

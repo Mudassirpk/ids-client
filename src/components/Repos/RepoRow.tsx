@@ -20,7 +20,7 @@ export default function RepoRow({
   const navigate = useNavigate();
   async function get_ssh_url(name: string) {
     const response = await axios.post(
-      "api/github/get-ssh-url",
+      "http://localhost:3001/github/get-ssh-url",
       {
         name,
       },

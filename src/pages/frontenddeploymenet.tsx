@@ -47,7 +47,7 @@ export default function Frontenddeploymenet() {
 
         setIsLoading(true);
 
-        const response = await fetch("api/react-frontend", {
+        const response = await fetch("http://localhost:3001/react-frontend", {
           headers: {
             "x-auth-token": "Bearer " + localStorage.getItem("auth-token"),
           },
@@ -66,7 +66,7 @@ export default function Frontenddeploymenet() {
                 .replace(/\n+/g, " ")
                 .replace(/\\n/g, "");
               return modified_log;
-            })
+            }),
           );
           setProcessSuccess(true);
         } else {

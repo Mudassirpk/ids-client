@@ -10,7 +10,7 @@ function FrontendIntegrationTable({
   selectedFERepo: string;
   setSelectedFERepo: React.Dispatch<React.SetStateAction<string>>;
 }) {
-  const { isFetching, isFetched, data } = useQuery({
+  const { isFetching, data } = useQuery({
     queryKey: ["frontend-services"],
     queryFn: async () =>
       await axios.get("api/integrate/frontend"),

@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { getServices } from "../../services/services.service";
 import Loading from "./Loading";
 import { IoCheckmarkDoneCircle } from "react-icons/io5";
 import axios from "axios";

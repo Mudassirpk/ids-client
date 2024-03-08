@@ -14,7 +14,7 @@ export default function Backenddeployment() {
     build_command: "",
   });
 
-  const [user,_setUser] = useAuth()
+  const [user, _setUser] = useAuth();
 
   const [envFile, setEnvFile] = useState<File | null>();
 
@@ -51,8 +51,7 @@ export default function Backenddeployment() {
         formData.append("build_command", deploymentInfo.build_command);
         formData.append("env", envFile as Blob);
         formData.append("repo_name", repo_name as string);
-        formData.append("owner",user?._id as string)
-
+        formData.append("owner", user?._id as string);
 
         const response = await fetch("api/node-backend", {
           headers: {
@@ -63,9 +62,9 @@ export default function Backenddeployment() {
         });
 
         const json_response = await response.json();
-        setIsLoading(false);
 
         if (response.status === 201) {
+          setIsLoading(false);
           setLogs(
             json_response.payload.split("TASK ").map((log: string) => {
               return log
@@ -76,6 +75,7 @@ export default function Backenddeployment() {
           );
           setProcessSuccess(true);
         } else {
+          setIsLoading(false);
           setProcessSuccess(false);
           if (json_response.payload) {
             const modified_response = json_response.payload
@@ -203,7 +203,7 @@ export default function Backenddeployment() {
             (if you are not using any environment variables you can leave it)
           </span>
           <input
-            accept=".env.*"
+            accept=".env, .env.*"
             type="file"
             onChange={(e) => {
               if (e.target.files) {

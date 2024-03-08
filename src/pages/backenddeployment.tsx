@@ -53,7 +53,7 @@ export default function Backenddeployment() {
         formData.append("repo_name", repo_name as string);
         formData.append("owner", user?._id as string);
 
-        const response = await fetch("http://localhost:3001/node-backend", {
+        const response = await fetch("api/node-backend", {
           headers: {
             "x-auth-token": "Bearer " + localStorage.getItem("auth-token"),
           },

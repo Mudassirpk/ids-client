@@ -13,7 +13,7 @@ function FrontendIntegrationTable({
   const { isFetching, isFetched, data } = useQuery({
     queryKey: ["frontend-services"],
     queryFn: async () =>
-      await axios.get("http://localhost:3001/integrate/frontend"),
+      await axios.get("api/integrate/frontend"),
   });
 
   return (

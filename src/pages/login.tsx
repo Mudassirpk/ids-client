@@ -24,7 +24,7 @@ export default function Login() {
 
   async function login() {
     return await axios.post(
-      "http://localhost:3001/auth/login",
+      "api/auth/login",
       { ...credentials },
       {
         headers: {

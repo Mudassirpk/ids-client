@@ -37,7 +37,7 @@ export default function FrontEndServiceRow({
     mutationKey: ["site_sync"],
     mutationFn: async (site_id: string) =>
       await axios.post(
-        "http://localhost:3001/sync/sync-site",
+        "api/sync/sync-site",
         {
           site: site_id,
         },

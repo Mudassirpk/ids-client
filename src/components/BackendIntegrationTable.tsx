@@ -14,7 +14,7 @@ function BackendIntegrationTable({
   const { isFetching, isFetched, data } = useQuery({
     queryKey: ["backend-services"],
     queryFn: async () =>
-      await axios.get("http://localhost:3001/integrate/backend"),
+      await axios.get("api/integrate/backend"),
   });
 
   return (

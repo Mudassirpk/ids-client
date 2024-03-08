@@ -39,6 +39,9 @@ export default function FrontendServicesStatus() {
                       <th scope="col" className="px-6 py-4">
                         Status
                       </th>
+                      <th scope="col" className="px-6 py-4">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody>

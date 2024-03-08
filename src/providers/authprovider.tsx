@@ -2,7 +2,7 @@ import React, { SetStateAction, useEffect, useState } from "react";
 import Loading from "../components/Loading";
 
 type TUser = {
-  _id:string,
+  _id: string,
   name: string;
   email: string;
   password: null;

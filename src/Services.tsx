@@ -65,8 +65,8 @@ export default function Services() {
                             </td>
                             <td
                               className={`${status.status.trim().toLowerCase() === "online"
-                                  ? "text-green-700"
-                                  : "text-red-700"
+                                ? "text-green-700"
+                                : "text-red-700"
                                 } font-semibold whitespace-nowrap px-6 py-4`}
                             >
                               {status.status}

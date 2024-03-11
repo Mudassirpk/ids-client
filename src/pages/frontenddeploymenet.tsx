@@ -66,7 +66,7 @@ export default function Frontenddeploymenet() {
                 .replace(/\n+/g, " ")
                 .replace(/\\n/g, "");
               return modified_log;
-            })
+            }),
           );
           setProcessSuccess(true);
         } else {

@@ -71,7 +71,7 @@ export default function Backenddeployment() {
                 .replace(/\*+/g, " ")
                 .replace(/\n+/g, " ")
                 .replace(/\\n/g, "");
-            })
+            }),
           );
           setProcessSuccess(true);
         } else {
@@ -105,6 +105,7 @@ export default function Backenddeployment() {
       setDeploymentInfo({ ...deploymentInfo, repo_url: ssh_url });
     }
   }, [params]);
+
   return (
     <section className="w-full mx-auto px-4 mt-4 py-8 flex flex-col items-center">
       <h1 className="font-bold text-center text-blue-800 text-2xl">

@@ -11,6 +11,7 @@ import Frontenddeploymenet from "./pages/frontenddeploymenet.tsx";
 import Backenddeployment from "./pages/backenddeployment.tsx";
 import RootLayout from "./root.tsx";
 import App from "./App.tsx";
+import Integrate from "./pages/Integrate.tsx";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
       {
         path: "deploy-node-backend",
         element: <Backenddeployment />,
+      },
+      {
+        path: "integrate",
+        element: <Integrate />,
       },
     ],
   },

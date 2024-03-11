@@ -46,6 +46,12 @@ export default function RootLayout() {
         >
           Deploy Node Backend
         </Link>
+        <Link
+          className={`${window.location.pathname === "/integrate" ? "bg-white text-blue-800 font-bold" : " bg-blue-700 text-white"} px-4 py-2 rounded-bl-lg rounded-br-lg`}
+          to={"/integrate"}
+        >
+          Integrate
+        </Link>
         <button
           onClick={logout}
           className={

@@ -17,7 +17,7 @@ export default function Services() {
     mutationKey: ["site_sync"],
     mutationFn: async (site_id: string) =>
       await axios.post(
-        "http://localhost:3001/sync/sync_site",
+        "api/sync/sync_site",
         {
           site: site_id,
         },

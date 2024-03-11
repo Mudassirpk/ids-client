@@ -1,11 +1,37 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getServices } from "../services/services.service.ts";
 import Loading from "./components/Loading.tsx";
+import axios from "axios";
 
 export default function Services() {
   const { isLoading, data } = useQuery({
     queryKey: ["backend-services"],
     queryFn: () => getServices("backend"),
+  });
+
+  const {
+    status: site_sync_status,
+    mutate: sync_site,
+    reset,
+  } = useMutation({
+    mutationKey: ["site_sync"],
+    mutationFn: async (site_id: string) =>
+      await axios.post(
+        "http://localhost:3001/sync/sync_site",
+        {
+          site: site_id,
+        },
+        {
+          headers: {
+            "x-auth-token": "Bearer " + localStorage.getItem("auth-token"),
+          },
+        }
+      ),
+    onSuccess(data) {
+      if (data?.data.success) {
+        setTimeout(reset, 5000);
+      }
+    },
   });
 
   return (
@@ -42,18 +68,22 @@ export default function Services() {
                       <th scope="col" className="px-6 py-4">
                         Path
                       </th>
+                      <th scope="col" className="px-6 py-4">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {data?.data.map(
                       (
                         status: {
+                          site_id:string,
                           name: string;
                           id: number;
                           status: string;
                           path: string;
                         },
-                        index: number,
+                        index: number
                       ) => {
                         return (
                           <tr className="border-b dark:border-neutral-500 text-lg text-black">
@@ -64,10 +94,11 @@ export default function Services() {
                               {status.name}
                             </td>
                             <td
-                              className={`${status.status.trim().toLowerCase() === "online"
+                              className={`${
+                                status.status.trim().toLowerCase() === "online"
                                   ? "text-green-700"
                                   : "text-red-700"
-                                } font-semibold whitespace-nowrap px-6 py-4`}
+                              } font-semibold whitespace-nowrap px-6 py-4`}
                             >
                               {status.status}
                             </td>
@@ -77,9 +108,28 @@ export default function Services() {
                             <td className="whitespace-nowrap px-6 py-4">
                               {status.path}
                             </td>
+                            <td className="whitespace-nowrap px-6 py-4">
+                              <button
+                              onClick={()=>sync_site(status.site_id)}
+                                disabled={site_sync_status === "pending"}
+                                className={`px-2 py-1 rounded-lg ${
+                                  site_sync_status === "pending"
+                                    ? "bg-gray-300 pointer-events-none"
+                                    : "bg-blue-600 hover:bg-blue-500 "
+                                } text-white`}
+                              >
+                                {site_sync_status === "pending" ? (
+                                  <Loading />
+                                ) : site_sync_status === "success" ? (
+                                  "Site Synced Successfully"
+                                ) : (
+                                  "Sync"
+                                )}
+                              </button>
+                            </td>
                           </tr>
                         );
-                      },
+                      }
                     )}
                   </tbody>
                 </table>

@@ -8,7 +8,7 @@ function App() {
       <h1
         className={"w-full text-center font-bold text-4xl my-6 text-blue-800"}
       >
-        IDS - V 1.0 {"<UPDATED>"}
+        IDS - V 1.1 {"<UPDATED>"}
       </h1>
       <Services />
       <FrontendServicesStatus />

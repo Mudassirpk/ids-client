@@ -45,7 +45,7 @@ export default function FrontEndServiceRow({
           headers: {
             "x-auth-token": "Bearer " + localStorage.getItem("auth-token"),
           },
-        }
+        },
       ),
     onSuccess(data) {
       if (data?.data.success) {
@@ -67,7 +67,11 @@ export default function FrontEndServiceRow({
       <td className="whitespace-nowrap px-6  py-2">{service.name}</td>
       <td className={"py-2"}>{service.repo}</td>
       <td className="whitespace-nowrap px-6  py-2">
-        <a className={"text-blue-500 hover:underline"} href={service.domain}>
+        <a
+          className={"text-blue-500 hover:underline"}
+          target={"_blank"}
+          href={`https://${service.domain}`}
+        >
           {service.domain}
         </a>
       </td>
